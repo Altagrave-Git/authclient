@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+    
+  <h1>Login Page</h1>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.size) {
+      const code = params.get("code");
+      fetch(location.origin + '/authorize/?code=' + code)
+      .then(response => { return response.json() })
+      .then(data => {
+        const token = `${data.token_type} ${data.access_token}`;
+        const user = data.username;
+        const maxAge = data.expires_in;
+        document.cookie = `user=${user};max-age=${maxAge};path=/`;
+        document.cookie = `token=${token};max-age=${maxAge};path=/`;
+        location.href = location.origin;
+      })
+      .catch(error => console.log(error));
+    } else {
+      location.href = location.origin;
+    }
+  </script>
+</body>
+</html>
