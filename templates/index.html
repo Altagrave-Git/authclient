@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+</head>
+<body>
+    <h1>Home Page</h1>  
+
+    <button type="button" onclick=getCode()>OpenID Log In</button>
+
+    <!-- this element will soon display your username -->
+    <h2 id="user"></h2>
+
+    <script>
+      // retrieve and navigate to authorization url
+      const getCode = async () => {
+        await fetch('http://127.0.0.1:3000/authorize/')
+        .then(response => { return response.json() })
+        .then(data => location.href = data.url)
+        .catch(error => console.log(error));
+      }
+
+      let token, user;
+      // Split cookies into array
+      const cookies = document.cookie.split("; ")
+      cookies.forEach((cookie, index) => {
+        // Seperate cookie's key and value
+        const [key, value] = cookie.split("=");
+        // If token cookie, save value to token variable
+        if (key === "token") {
+          token = value;
+        // If user cookie, save value to user variable
+        } else if (key === "user") {
+          user = value;
+        }
+      })
+      
+      // If user cookie was found, render welcome message
+      if (user) {
+        const userElement = document.getElementById("user");
+        userElement.innerText = `Welcome, ${user}!`;
+      }
+    </script>
+</body>
+</html>
